@@ -1,0 +1,32 @@
+nodeSelector:
+  node-group: "argo-group"
+
+global:
+  domain: ""
+
+configs:
+  params:
+    server.insecure: true
+
+server:
+  
+  ingress:
+    enabled: true
+    ingressClassName: "alb"
+    annotations:
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/backend-protocol: HTTP
+      
+    # hostname: "pnubookstore.shop"
+    # extraRules:
+    #   - http:
+    #       paths:
+    #       - backend:
+    #           service:
+    #             name: argocd-server
+    #             port:
+    #               number: 80
+    #         path: /
+    #         pathType: Prefix
+  service:
+    type: NodePort

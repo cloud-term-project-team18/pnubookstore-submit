@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>거래게시판</title>
+    <style>
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">거래 게시판</h1>
+    <!-- 검색 폼 추가 -->
+    <form id="search-form" class="row mb-4">
+        <div class="col-md-3">
+            <select id="university" class="form-select">
+                <option value="">대학</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="department" class="form-select">
+                <option value="">주관학과</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="professor" class="form-select">
+                <option value="">교수명</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="course" class="form-select">
+                <option value="">강좌명</option>
+            </select>
+        </div>
+    </form>
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="product-list">
+        <!-- 상품 카드들이 여기 추가됩니다 -->
+    </div>
+    <!--        <div th:replace="fragments/footer :: footer">&copy; 2016 The Static Templates</div>-->
+</div>
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery (필요시 포함) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 페이지네이션을 위한 스크립트 -->
+<script>
+    let page = 0;
+
+    function loadMoreProducts() {
+        const university = $('#university').val();
+        const department = $('#department').val();
+        const professor = $('#professor').val();
+        const course = $('#course').val();
+
+        $.ajax({
+            url: '/api/products', // 서버에서 제품을 로드하는 URL
+            type: 'GET',
+            data: {
+                page: page,
+                college: university,
+                department: department,
+                professor: professor,
+                course: course
+            },
+            success: function (data) {
+                data.content.forEach(product => {
+
+                    $('#product-list').append(
+                        '<div class="col">' +
+                        '<a href="/products/' + product.productId + '" class="card-link">' +
+                        '<div class="card">' +
+                        '<div class="card-body">' +
+                        '<h5 class="card-title">' + product.productName + '</h5>' +
+                        '<p class="card-text">가격: ₩' + product.price + '</p>' +
+                        '</div>' +
+                        '</div>' +
+                        '</a>' +
+                        '</div>'
+                    );
+                });
+                page++;
+            },
+            error: function () {
+                console.error('제품을 로드하는 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function loadSelectBoxData(endpoint, selectBoxId) {
+        $.ajax({
+            url: endpoint,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                const selectBox = $(selectBoxId);
+                selectBox.empty();
+                selectBox.append('<option value="">선택</option>');
+                const uniqueData = [...new Set(data)];
+                uniqueData.forEach(item => {
+                    selectBox.append('<option value="' + item + '">' + item + '</option>');
+                });
+            },
+            error: function() {
+                console.error('선택박스 데이터를 로드하는 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        loadSelectBoxData('/api/colleges', '#university');
+
+        $('#university').change(function() {
+            const college = $(this).val();
+            if (college) {
+                loadSelectBoxData('/api/departments?college=' + college, '#department');
+            } else {
+                $('#department').empty().append('<option value="">주관학과</option>');
+                $('#professor').empty().append('<option value="">교수명</option>');
+                $('#course').empty().append('<option value="">강좌명</option>');
+            }
+        });
+
+        $('#department').change(function() {
+            const college = $('#university').val();
+            const department = $(this).val();
+            if (college && department) {
+                loadSelectBoxData('/api/professors?college=' + college + '&department=' + department, '#professor');
+            } else {
+                $('#professor').empty().append('<option value="">교수명</option>');
+                $('#course').empty().append('<option value="">강좌명</option>');
+            }
+        });
+
+        $('#professor').change(function() {
+            const college = $('#university').val();
+            const department = $('#department').val();
+            const professor = $(this).val();
+            if (college && department && professor) {
+                loadSelectBoxData('/api/subjects?college=' + college + '&department=' + department + '&professor=' + professor, '#course');
+            } else {
+                $('#course').empty().append('<option value="">강좌명</option>');
+            }
+        });
+
+        loadMoreProducts(); // 페이지 로드 시 첫 페이지 로드
+
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                loadMoreProducts();
+            }
+        });
+
+        $('#search-form select').change(function() {
+            page = 0;
+            $('#product-list').empty(); // 기존 검색 결과 지우기
+            loadMoreProducts(); // 새로운 검색 결과 로드
+        });
+    });
+</script>
+</body>
+</html>

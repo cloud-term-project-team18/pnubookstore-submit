@@ -1,0 +1,134 @@
+---
+# Source: argo-cd/templates/dex/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argo-argocd-dex-server
+  namespace: default
+  labels:
+    helm.sh/chart: argo-cd-7.1.1
+    app.kubernetes.io/name: argocd-dex-server
+    app.kubernetes.io/instance: argo
+    app.kubernetes.io/component: dex-server
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: "v2.11.2"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-dex-server
+      app.kubernetes.io/instance: argo
+  template:
+    metadata:
+      annotations:
+        checksum/cmd-params: 1ae46aa03d0dd21b3bc13fde9dec29e3f5b2c5376e1fba23809d2c38b1a55273
+      labels:
+        helm.sh/chart: argo-cd-7.1.1
+        app.kubernetes.io/name: argocd-dex-server
+        app.kubernetes.io/instance: argo
+        app.kubernetes.io/component: dex-server
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: argocd
+        app.kubernetes.io/version: "v2.11.2"
+    spec:
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: argocd-dex-server
+      automountServiceAccountToken: true
+      containers:
+      - name: dex-server
+        image: ghcr.io/dexidp/dex:v2.38.0
+        imagePullPolicy: IfNotPresent
+        command:
+        - /shared/argocd-dex
+        - --logformat=text
+        - --loglevel=info
+        args:
+        - rundex
+        env:
+          - name: ARGOCD_DEX_SERVER_DISABLE_TLS
+            valueFrom:
+              configMapKeyRef:
+                name: argocd-cmd-params-cm
+                key: dexserver.disable.tls
+                optional: true
+        ports:
+        - name: http
+          containerPort: 5556
+          protocol: TCP
+        - name: grpc
+          containerPort: 5557
+          protocol: TCP
+        - name: metrics
+          containerPort: 5558
+          protocol: TCP
+        resources:
+          {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - name: static-files
+          mountPath: /shared
+        - name: dexconfig
+          mountPath: /tmp
+        - name: argocd-dex-server-tls
+          mountPath: /tls
+      initContainers:
+      - name: copyutil
+        image: quay.io/argoproj/argocd:v2.11.2
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/cp
+        - -n
+        - /usr/local/bin/argocd
+        - /shared/argocd-dex
+        volumeMounts:
+        - mountPath: /shared
+          name: static-files
+        - mountPath: /tmp
+          name: dexconfig
+        resources:
+          {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: argocd-dex-server
+              topologyKey: kubernetes.io/hostname
+      volumes:
+      - name: static-files
+        emptyDir: {}
+      - name: dexconfig
+        emptyDir: {}
+      - name: argocd-dex-server-tls
+        secret:
+          secretName: argocd-dex-server-tls
+          optional: true
+          items:
+          - key: tls.crt
+            path: tls.crt
+          - key: tls.key
+            path: tls.key
+          - key: ca.crt
+            path: ca.crt
+      dnsPolicy: ClusterFirst

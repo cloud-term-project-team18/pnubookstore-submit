@@ -1,0 +1,6 @@
+kubeconfig.yaml
+/terraform/.terraform/**
+/terraform/.terraform*
+/terraform/terraform.*
+.env
+secrets.yml

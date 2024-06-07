@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: ${DATABASE_URI}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: false
+        default_batch_fetch_size: 100
+    open-in-view: false
+
+  application:
+    name: PnuBookStoreBatchApplication
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false

@@ -1,0 +1,132 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: web
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      nodeSelector:
+        node-group: server-group
+      containers:
+        - name: spring
+          image: jotunlmn.kr.private-ncr.ntruss.com/docker-pnu-bookstore-spring:latest
+          envFrom:
+            - secretRef:
+                name: database-secret
+          resources:          
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          ports:
+            - name: spring
+              containerPort: 8080
+              protocol: TCP
+
+        - name: nginx
+          image: nginx:latest
+          ports:
+          - name: nginx
+            containerPort: 80
+            protocol: TCP
+          volumeMounts:
+          - name: nginx-logs
+            mountPath: /var/log/nginx
+          - name: nginx-config
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
+      volumes:
+        - name: nginx-logs
+          hostPath:
+            path: /var/log/nginx
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+      imagePullSecrets:
+      - name: docker-registry
+    
+              
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: web
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  ports:
+  - name: backend
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: web
+data:
+  nginx.conf: |
+    worker_processes 1;
+
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+        error_log   /var/log/nginx/error.log warn;
+
+        sendfile        on;
+        keepalive_timeout  65;
+
+        server {
+            listen       80;
+            server_name  pnubookstore.shop;
+
+            location /hc{
+                default_type application/json;
+                return 200 '{"status":200, "message":"server is healthy"}';
+            }
+
+            location / {
+                proxy_pass http://localhost:8080;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
+        }
+    }

@@ -1,0 +1,37 @@
+replicaCount: 1
+
+elasticsearchHosts: "https://elasticsearch-master:9200"
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+
+service:
+  type: LoadBalancer
+  port: 5601
+  annotations:
+    service.beta.kubernetes.io/ncloud-load-balancer-layer-type: "nlb"
+    service.beta.kubernetes.io/ncloud-load-balancer-internal: "false"
+    service.beta.kubernetes.io/ncloud-load-balancer-size: "SMALL"
+  metadata:
+    name: kibana
+
+nodeSelector:
+  node-group: "efk-group"
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node-group
+          operator: In
+          values:
+          - "efk-group"
+
+# 네임스페이스 지정
+namespace: "efk"

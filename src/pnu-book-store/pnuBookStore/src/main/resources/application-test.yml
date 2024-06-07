@@ -1,0 +1,46 @@
+server:
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+  port: 8000
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MySQL
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+      default_batch_fetch_size: 100
+    open-in-view: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: pnuauction@gmail.com
+    password: dwdkwjuyorcdvlxm
+    properties:
+      mail:
+        debug: ture
+        smtp:
+          starttls:
+            enable: true
+            requred: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+logging:
+  level:
+    org.springframework: INFO
+    com.example: DEBUG
+
+

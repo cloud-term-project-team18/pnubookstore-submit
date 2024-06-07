@@ -1,0 +1,31 @@
+name: Make Image
+
+on:
+    push:
+        branches:
+            - main
+
+env:
+    IMAGE_TAG: latest
+
+defaults:
+    run:
+        working-directory: pnu-book-store-batch
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Login to NCP Registry
+              id: login_registry
+              run: |
+                docker login ${{ secrets.REGISTRY }} --username ${{ secrets.ACCESS_TOKEN }} --password ${{ secrets.SECRET_TOKEN }}
+        
+            - name: Docker Build
+              run: |
+                docker build -t ${{ secrets.REGISTRY }}/${{secrets.REPOSITORY}}:$IMAGE_TAG .
+                docker push ${{ secrets.REGISTRY }}/${{secrets.REPOSITORY}}:$IMAGE_TAG
+                
