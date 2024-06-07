@@ -69,7 +69,7 @@
 > 노드 풀 아래에는 여러 노드가 배치되어 있으며, 각 노드엔 Nginx와 백엔드 서버가 포함된 Pod가 존재한다. 오토스케일링 기능을 통해 자동으로 노드 및 파드의 수를 조정해 트래픽 변동에 따른 자원을 효율적으로 관리할 수 있다.
 
 > **이메일 인증 과정**
-> ![email_verification](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification.png)
+> ![email](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email.png)
 
 > 사설 서브넷에는 Spring 애플리케이션이 포함된 Pod가 배치되어있다. Pod는 SMTP 프로토콜을 사용해 이메일을 전송한다. 공개 서브넷엔 NAT가 위치해 사설 네트워크에서 발생하는 이메일 트래픽을 외부로 전송한다. 이메일은 NAT를 거쳐 IGT를 통해 인터넷에 접속하고, 외부 이메일 서비스로 전송된다.
 
