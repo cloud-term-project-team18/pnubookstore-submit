@@ -94,4 +94,44 @@
 >  * 상단의 myPage에서 내 정보와 구매, 판매한 물품을 확인할 수 있다.
 
 ## 활용방안 소개
->  * 구매자는 저렴한 가격으로 중고서적을 구매하고, 판매자는 더 이상 사용하지 않는 전공서적을 판매함으로써 경제적 부담을 줄일 수 있다.
+> 해당 서비스는 부산대학생을 위해 구성되어있으며, 학과, 과목, 교수 또한 이에 맞게 구성되어있다. 하지만 타 대학들의 기본구조가 비슷하기 때문에, 약간의 코드 수정을 하면 다른 대학교도 충분히 사용가능한 대학별 중고서적 거래플랫폼이 될 것이다. 
+
+## 부하테스트 실행 결과
+> **부하 테스트 실행**
+> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud4.png)
+
+> **노드 스케일링**
+> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud1.png)
+
+> **Pod 스케일링**
+> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud2.png)
+
+> **스케일링결과**
+> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud3.png)
+
+
+## UI소개
+> **메인페이지**
+> ![index1](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/index1.png)
+
+> **이메일 인증 및 회원가입**
+> ![ev1](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification.png)
+> ![ev2](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification2.png)
+> ![ev3](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification3.png)
+> ![signUp](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/signUp.png)
+
+> **거래게시판**
+> ![board](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/search.gif)
+
+> **상세 페이지**
+> ![detail1](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/detail1.png)
+> ![detail2](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/detail2.png)
+
+> **물품 등록**
+> ![register](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/register.png)
+
+> **myPage**
+> ![myPage](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/myPage.png)
+
+> **구매 물품**
+> ![purchased](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/Purchased.png)
