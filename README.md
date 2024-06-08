@@ -34,7 +34,7 @@
 > 구매자에게 지정된 위치와 비밀번호를 공유해 비대면으로 거래가 진행될 수 있도록 합니다.
 
 ## 관련 기술/논문/특허 조사내용 소개
-![사용 기술](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/stack.png)
+![사용 기술](./image/stack.png)
 > **Server**
 >  * Spring boot : Web Application Server
 >  * NGINX : Web Server
@@ -53,7 +53,7 @@
 
 ## 프로젝트 개발 결과물 소개
 > **Architecture**
-> ![architecture](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/architecture.png)
+> ![architecture](./image/architecture.png)
 
 > Terraform을 사용해 구축된 Naver Cloud Platform 상의 Kubernetes 아키텍쳐이다. 공개 서브셋에 위치한 ALB Ingress Controller는 외부 트래픽을 라우팅한다. private subnet1에선 NginX와 Spring을 통해 웹 서비스를 제공하고, Fluent-Bit으로 로그를 Elasticsearch로 전송한다.
 
@@ -61,27 +61,30 @@
 
 > ArgoCD를 통해 리소스의 지속적인 배포 및 업데이트를 관리한다. NAT Gateway를 통해 프라이빗 네트워크 내의 자원이 인터넷에 접근할 수 있게한다. 
 
-> **웹 어플리케이션 구성도**
-> ![autoscaling](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/AutoScaling.png)
+> **웹 어플리케이션 구성도** <br>
+> <img src="./image/AutoScaling.png" width="70%" height="100%">
+<!-- > ![autoscaling](./image/AutoScaling.png) -->
 
 > HTTP로 들어오는 트래픽은 HTTPS로 자동 리다이렉트되어 보안을 유지한다. 로드 밸런서는 설정된 규칙에 따라 트래픽을 백엔드 서비스 그룹으로 전달한다.
 
 > 노드 풀 아래에는 여러 노드가 배치되어 있으며, 각 노드엔 Nginx와 백엔드 서버가 포함된 Pod가 존재한다. 오토스케일링 기능을 통해 자동으로 노드 및 파드의 수를 조정해 트래픽 변동에 따른 자원을 효율적으로 관리할 수 있다.
 
-> **이메일 인증 과정**
-> ![email](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email.png)
+> **이메일 인증 과정** <br>
+> <img src="./image/email.png" width="70%" height="100%">
+<!-- > ![email](./image/email.png) -->
 
 > 사설 서브넷에는 Spring 애플리케이션이 포함된 Pod가 배치되어있다. Pod는 SMTP 프로토콜을 사용해 이메일을 전송한다. 공개 서브넷엔 NAT가 위치해 사설 네트워크에서 발생하는 이메일 트래픽을 외부로 전송한다. 이메일은 NAT를 거쳐 IGT를 통해 인터넷에 접속하고, 외부 이메일 서비스로 전송된다.
 
 > **CI/CD**
-> ![CICD](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/CICD.png)
+> ![CICD](./image/CICD.png)
 
 > 개발자는 코드 변경사항을 BackEnd GitHub 레포지토리에 push한다. 이벤트를 GitHub Actions가 받아 코드를 자동으로 빌드하고 테스트하며, 빌드된 이미지를 Naver Container Registry에 푸시한다. 이후 GitHub Actions이 k8s manifests가 존재하는 레포지토리에 이미지 태그 변경사항을 업데이트하고 push한다. ArgoCD는 레포지토리를 주기적으로 폴링해 변경사항을 감지하고, 감지된 변경사항을 k8s 클러스터에 자동으로 적용한다.
 
 > 또한 DevOps 팀원이 k8s manifests파일을 리포지토리에 업데이트하고 push한다. 이후 ArgoCD가 레포지토리를 주기적으로 폴링해 변경사항을 감지하고, 감지된 변경사항을 k8s 클러스터에 자동으로 적용한다.
 
-> **Batch**
-> ![batch](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/batch.png)
+> **Batch** <br>
+> <img src="./image/batch.png" width="70%" height="100%">
+<!-- > ![batch](./image/batch.png) -->
 
 > DevOps 엔지니어는 'kubectl 명령어'를 통해 k8s 클러스터 내에서 수강편람 추출 배치 작업을 실행한다. 결과는 MySQL 데이터베이스에 저장되고, 이 데이터베이스는 VPC 내의 리소스만 접근할 수 있기에 데이터의 보안을 유지한다.
 
@@ -98,40 +101,42 @@
 
 ## 부하테스트 실행 결과
 > **부하 테스트 실행**
-> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud4.png)
+> ![](./image/cloud4.png)
 
 > **노드 스케일링**
-> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud1.png)
+> ![](./image/cloud1.png)
 
 > **Pod 스케일링**
-> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud2.png)
+> ![](./image/cloud2.png)
 
 > **스케일링결과**
-> ![](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/cloud3.png)
+> ![](./image/cloud3.png)
 
 
 ## UI소개
-> **메인페이지**
-> ![index1](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/index1.png)
+> **메인페이지** <br>
+> <img src="./image/index1.png" width="70%" height="100%">
+<!-- > ![index1](./image/index1.png) -->
 
-> **이메일 인증 및 회원가입**
-> ![ev1](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification.png)
-> ![ev2](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification2.png)
-> ![ev3](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/email_verification3.png)
-> ![signUp](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/signUp.png)
+> **이메일 인증 및 회원가입** <br>
+> <img src="./image/email_verification.png" width="70%" height="100%">
+> <img src="./image/email_verification2.png" width="70%" height="100%">
+> <img src="./image/email_verification3.png" width="70%" height="100%">
+> <img src="./image/signUp.png" width="70%" height="100%">
+<!-- > ![signUp](./image/signUp.png) -->
 
-> **거래게시판**
-> ![board](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/search.gif)
+> **거래게시판** <br>
+> <img src="./image/search.gif" width="70%" height="100%">
+<!-- > ![board](./image/search.gif) -->
 
-> **상세 페이지**
-> ![detail1](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/detail1.png)
-> ![detail2](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/detail2.png)
+> **상세 페이지** <br>
+> <img src="./image/detail1.png" width="50%" height="70%"><img src="./image/detail2.png" width="50%" height="70%">
 
-> **물품 등록**
-> ![register](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/register.png)
+> **물품 등록** <br>
+> <img src="./image/register.png" width="70%" height="70%">
 
-> **myPage**
-> ![myPage](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/myPage.png)
+> **myPage** <br>
+> <img src="./image/myPage.png" width="50%" height="70%">
 
-> **구매 물품**
-> ![purchased](https://github.com/cloud-term-project-team18/pnu-book-store/blob/main/Purchased.png)
+> **구매 물품** <br>
+> <img src="./image/Purchased.png" width="50%">
